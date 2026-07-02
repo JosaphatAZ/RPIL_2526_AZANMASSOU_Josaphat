@@ -1,53 +1,64 @@
-// ============================
-// IFRI MentorLink - Frontend JS
-// ============================
+let toutesLesCompetences = [];
 
-let allCompetences = [];
-
-// ============================
-// INIT
-// ============================
 document.addEventListener('DOMContentLoaded', () => {
-  createParticles();
-  startTypingEffect();
-  animateCounters();
-  loadFilieres();
-  loadCompetences();
-  setupAutocomplete();
-  setupCardMouseGlow();
+  initialiserTheme();
+  creerParticules();
+  demarrerEffetSaisie();
+  animerCompteurs();
+  chargerFilieres();
+  chargerCompetences();
+  configurerAutocompletion();
+  configurerLueurCarte();
+
+  document.getElementById('bouton-theme').addEventListener('click', basculerTheme);
 
   document.getElementById('competences').addEventListener('keydown', e => {
-    if (e.key === 'Enter') searchMentors();
+    if (e.key === 'Enter') rechercherMentors();
   });
 });
 
-// ============================
-// PARTICULES
-// ============================
-function createParticles() {
-  const container = document.getElementById('particles');
-  const count = 18;
-  for (let i = 0; i < count; i++) {
+function initialiserTheme() {
+  const bouton = document.getElementById('bouton-theme');
+  const themeEnregistre = localStorage.getItem('theme-mentorlink');
+  const preferSombre = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = themeEnregistre || (preferSombre ? 'sombre' : 'clair');
+
+  appliquerTheme(theme);
+}
+
+function appliquerTheme(theme) {
+  const bouton = document.getElementById('bouton-theme');
+  document.documentElement.setAttribute('data-theme', theme);
+  bouton.textContent = theme === 'sombre' ? '☀️' : '🌙';
+  localStorage.setItem('theme-mentorlink', theme);
+}
+
+function basculerTheme() {
+  const themeActuel = document.documentElement.getAttribute('data-theme');
+  appliquerTheme(themeActuel === 'sombre' ? 'clair' : 'sombre');
+}
+
+function creerParticules() {
+  const conteneur = document.getElementById('particules');
+  const nombre = 18;
+  for (let i = 0; i < nombre; i++) {
     const p = document.createElement('div');
-    p.className = 'particle';
-    const size = Math.random() * 12 + 4;
+    p.className = 'particule';
+    const taille = Math.random() * 12 + 4;
     p.style.cssText = `
-      width: ${size}px;
-      height: ${size}px;
+      width: ${taille}px;
+      height: ${taille}px;
       left: ${Math.random() * 100}%;
       animation-duration: ${Math.random() * 15 + 10}s;
       animation-delay: ${Math.random() * -20}s;
       opacity: ${Math.random() * 0.5 + 0.1};
     `;
-    container.appendChild(p);
+    conteneur.appendChild(p);
   }
 }
 
-// ============================
-// TYPING EFFECT
-// ============================
-function startTypingEffect() {
-  const el = document.getElementById('typing');
+function demarrerEffetSaisie() {
+  const el = document.getElementById('texte-animation');
   const phrases = [
     'qui te correspond',
     'en Intelligence Artificielle',
@@ -55,65 +66,56 @@ function startTypingEffect() {
     'en Cybersécurité',
     'en IoT & Systèmes',
   ];
-  let phraseIdx = 0, charIdx = 0, deleting = false;
+  let indexPhrase = 0, indexCaractere = 0, suppression = false;
 
-  function type() {
-    const current = phrases[phraseIdx];
-    if (deleting) {
-      el.innerHTML = current.slice(0, charIdx--) + '<span class="typing-cursor">|</span>';
-      if (charIdx < 0) { deleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; charIdx = 0; setTimeout(type, 400); return; }
-      setTimeout(type, 40);
+  function saisir() {
+    const actuelle = phrases[indexPhrase];
+    if (suppression) {
+      el.innerHTML = actuelle.slice(0, indexCaractere--) + '<span class="curseur-animation">|</span>';
+      if (indexCaractere < 0) { suppression = false; indexPhrase = (indexPhrase + 1) % phrases.length; indexCaractere = 0; setTimeout(saisir, 400); return; }
+      setTimeout(saisir, 40);
     } else {
-      el.innerHTML = current.slice(0, charIdx++) + '<span class="typing-cursor">|</span>';
-      if (charIdx > current.length) { deleting = true; setTimeout(type, 1800); return; }
-      setTimeout(type, 80);
+      el.innerHTML = actuelle.slice(0, indexCaractere++) + '<span class="curseur-animation">|</span>';
+      if (indexCaractere > actuelle.length) { suppression = true; setTimeout(saisir, 1800); return; }
+      setTimeout(saisir, 80);
     }
   }
-  setTimeout(type, 600);
+  setTimeout(saisir, 600);
 }
 
-// ============================
-// COUNTER ANIMATION
-// ============================
-function animateCounters() {
-  const counters = document.querySelectorAll('.stat-num');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target;
-      const target = +el.dataset.target;
-      let current = 0;
-      const step = target / 40;
-      const timer = setInterval(() => {
-        current = Math.min(current + step, target);
-        el.textContent = Math.floor(current);
-        if (current >= target) clearInterval(timer);
+function animerCompteurs() {
+  const compteurs = document.querySelectorAll('.nombre-statistique');
+  const observateur = new IntersectionObserver(entrees => {
+    entrees.forEach(entree => {
+      if (!entree.isIntersecting) return;
+      const el = entree.target;
+      const cible = +el.dataset.target;
+      let actuel = 0;
+      const pas = cible / 40;
+      const minuteur = setInterval(() => {
+        actuel = Math.min(actuel + pas, cible);
+        el.textContent = Math.floor(actuel);
+        if (actuel >= cible) clearInterval(minuteur);
       }, 30);
-      observer.unobserve(el);
+      observateur.unobserve(el);
     });
   });
-  counters.forEach(c => observer.observe(c));
+  compteurs.forEach(c => observateur.observe(c));
 }
 
-// ============================
-// CARD MOUSE GLOW
-// ============================
-function setupCardMouseGlow() {
+function configurerLueurCarte() {
   document.addEventListener('mousemove', e => {
-    document.querySelectorAll('.mentor-card').forEach(card => {
-      const rect = card.getBoundingClientRect();
+    document.querySelectorAll('.carte-mentor').forEach(carte => {
+      const rect = carte.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 100;
       const y = ((e.clientY - rect.top) / rect.height) * 100;
-      card.style.setProperty('--mx', x + '%');
-      card.style.setProperty('--my', y + '%');
+      carte.style.setProperty('--mx', x + '%');
+      carte.style.setProperty('--my', y + '%');
     });
   });
 }
 
-// ============================
-// DATA LOADING
-// ============================
-async function loadFilieres() {
+async function chargerFilieres() {
   try {
     const res = await fetch('/api/filieres');
     const filieres = await res.json();
@@ -126,69 +128,63 @@ async function loadFilieres() {
   } catch (e) { console.error('Erreur filieres:', e); }
 }
 
-async function loadCompetences() {
+async function chargerCompetences() {
   try {
     const res = await fetch('/api/competences');
-    allCompetences = await res.json();
+    toutesLesCompetences = await res.json();
   } catch (e) { console.error('Erreur competences:', e); }
 }
 
-// ============================
-// AUTOCOMPLETE
-// ============================
-function setupAutocomplete() {
-  const input = document.getElementById('competences');
-  const box = document.getElementById('suggestions');
+function configurerAutocompletion() {
+  const champ = document.getElementById('competences');
+  const boite = document.getElementById('suggestions');
 
-  input.addEventListener('input', () => {
-    const raw = input.value;
-    const parts = raw.split(',');
-    const last = parts[parts.length - 1].trim().toLowerCase();
+  champ.addEventListener('input', () => {
+    const brut = champ.value;
+    const parties = brut.split(',');
+    const derniere = parties[parties.length - 1].trim().toLowerCase();
 
-    if (last.length < 2) { box.classList.add('hidden'); return; }
+    if (derniere.length < 2) { boite.classList.add('masque'); return; }
 
-    const matches = allCompetences.filter(c => c.toLowerCase().includes(last)).slice(0, 7);
-    if (!matches.length) { box.classList.add('hidden'); return; }
+    const correspondances = toutesLesCompetences.filter(c => c.toLowerCase().includes(derniere)).slice(0, 7);
+    if (!correspondances.length) { boite.classList.add('masque'); return; }
 
-    box.innerHTML = '';
-    matches.forEach(m => {
+    boite.innerHTML = '';
+    correspondances.forEach(m => {
       const div = document.createElement('div');
-      div.className = 'suggestion-item';
+      div.className = 'element-suggestion';
       div.textContent = m;
       div.addEventListener('mousedown', () => {
-        const prefix = parts.slice(0, -1).join(', ');
-        input.value = prefix ? prefix + ', ' + m + ', ' : m + ', ';
-        box.classList.add('hidden');
-        input.focus();
+        const prefixe = parties.slice(0, -1).join(', ');
+        champ.value = prefixe ? prefixe + ', ' + m + ', ' : m + ', ';
+        boite.classList.add('masque');
+        champ.focus();
       });
-      box.appendChild(div);
+      boite.appendChild(div);
     });
-    box.classList.remove('hidden');
+    boite.classList.remove('masque');
   });
 
   document.addEventListener('click', e => {
-    if (!input.contains(e.target) && !box.contains(e.target)) box.classList.add('hidden');
+    if (!champ.contains(e.target) && !boite.contains(e.target)) boite.classList.add('masque');
   });
 }
 
-// ============================
-// SEARCH
-// ============================
-async function searchMentors() {
+async function rechercherMentors() {
   const competences = document.getElementById('competences').value.trim();
   const heure = document.getElementById('heure').value;
   const filiere = document.getElementById('filiere').value;
 
   if (!competences) {
-    showError('Veuillez entrer au moins une compétence ou matière.');
+    afficherErreur('Veuillez entrer au moins une compétence ou matière.');
     return;
   }
 
-  const btn = document.getElementById('btn-search');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="btn-ripple"></span><span class="spinner"></span><span class="btn-text">Recherche en cours...</span>';
+  const bouton = document.getElementById('bouton-recherche');
+  bouton.disabled = true;
+  bouton.innerHTML = '<span class="effet-onde"></span><span class="chargement"></span><span class="texte-bouton">Recherche en cours...</span>';
 
-  hideAll();
+  masquerTout();
 
   try {
     const res = await fetch('/api/search', {
@@ -198,124 +194,114 @@ async function searchMentors() {
     });
     const data = await res.json();
 
-    if (!res.ok) { showError(data.error || 'Une erreur est survenue.'); return; }
-    if (!data.length) { document.getElementById('empty-state').classList.remove('hidden'); return; }
+    if (!res.ok) { afficherErreur(data.error || 'Une erreur est survenue.'); return; }
+    if (!data.length) { document.getElementById('etat-vide').classList.remove('masque'); return; }
 
-    renderResults(data);
+    afficherResultats(data);
 
   } catch (e) {
-    showError('Impossible de contacter le serveur.');
+    afficherErreur('Impossible de contacter le serveur.');
   } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<span class="btn-ripple"></span><span class="btn-icon">⚡</span><span class="btn-text">Rechercher un mentor</span>';
+    bouton.disabled = false;
+    bouton.innerHTML = '<span class="effet-onde"></span><span class="icone-bouton">⚡</span><span class="texte-bouton">Rechercher un mentor</span>';
   }
 }
 
-// ============================
-// RENDER RESULTS
-// ============================
-function renderResults(mentors) {
-  const section = document.getElementById('results-section');
-  const grid = document.getElementById('results-grid');
-  const count = document.getElementById('results-count');
+function afficherResultats(mentors) {
+  const section = document.getElementById('section-resultats');
+  const grille = document.getElementById('grille-resultats');
+  const compteur = document.getElementById('nombre-resultats');
 
-  count.textContent = `${mentors.length} résultat${mentors.length > 1 ? 's' : ''}`;
-  grid.innerHTML = '';
+  compteur.textContent = `${mentors.length} résultat${mentors.length > 1 ? 's' : ''}`;
+  grille.innerHTML = '';
 
   mentors.forEach((m, i) => {
-    const card = buildCard(m, i);
-    card.style.animationDelay = `${i * 0.1}s`;
-    grid.appendChild(card);
+    const carte = construireCarte(m, i);
+    carte.style.animationDelay = `${i * 0.1}s`;
+    grille.appendChild(carte);
   });
 
-  section.classList.remove('hidden');
+  section.classList.remove('masque');
   section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Activer le glow après rendu
-  setTimeout(setupCardMouseGlow, 100);
+  setTimeout(configurerLueurCarte, 100);
 }
 
-// ============================
-// BUILD CARD
-// ============================
-function buildCard(m, rank) {
-  const card = document.createElement('div');
-  card.className = 'mentor-card';
+function construireCarte(m, rang) {
+  const carte = document.createElement('div');
+  carte.className = 'carte-mentor';
 
-  const initials = m.nom.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const scoreColor = m.score >= 70
+  const initiales = m.nom.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const couleurScore = m.score >= 70
     ? 'linear-gradient(90deg, #22C55E, #16A34A)'
     : m.score >= 40
     ? 'linear-gradient(90deg, #F59E0B, #D97706)'
     : 'linear-gradient(90deg, #4F8EF7, #3B82F6)';
 
-  const scoreLabel = m.score >= 70 ? '🔥 Excellent match' : m.score >= 40 ? '👍 Bon match' : '💡 Match partiel';
-  const rankEmoji = ['🥇','🥈','🥉'][rank] || '';
+  const libelleScore = m.score >= 70 ? '🔥 Excellent match' : m.score >= 40 ? '👍 Bon match' : '💡 Match partiel';
+  const emojiRang = ['🥇','🥈','🥉'][rang] || '';
 
-  const commonTags = m.competences_communes.length
-    ? m.competences_communes.map(c => `<span class="tag tag-match">✓ ${capitalize(c)}</span>`).join('')
-    : '<span class="tag" style="background:#F3F4F6;color:#6B7280">Aucune commune</span>';
+  const etiquettesCommunes = m.competences_communes.length
+    ? m.competences_communes.map(c => `<span class="etiquette etiquette-correspondance">✓ ${capitaliser(c)}</span>`).join('')
+    : '<span class="etiquette" style="background:#F3F4F6;color:#6B7280">Aucune commune</span>';
 
-  const dispoTags = m.disponibilites.map(h => `<span class="tag tag-dispo">🕐 ${h}</span>`).join('');
+  const etiquettesDispo = m.disponibilites.map(h => `<span class="etiquette etiquette-dispo">🕐 ${h}</span>`).join('');
 
-  card.innerHTML = `
-    ${rankEmoji ? `<div class="rank-badge">${rankEmoji}</div>` : ''}
-    <div class="card-header">
-      <div class="avatar">${initials}</div>
+  carte.innerHTML = `
+    ${emojiRang ? `<div class="badge-rang">${emojiRang}</div>` : ''}
+    <div class="entete-carte">
+      <div class="avatar">${initiales}</div>
       <div>
-        <div class="card-name">${m.nom}</div>
-        <div class="card-meta">${m.filiere} · ${m.niveau}</div>
+        <div class="nom-carte">${m.nom}</div>
+        <div class="info-carte">${m.filiere} · ${m.niveau}</div>
       </div>
     </div>
 
-    <div class="score-section">
-      <div class="score-label">
-        <span>${scoreLabel}</span>
-        <span class="score-value" style="color:${m.score >= 70 ? '#16A34A' : m.score >= 40 ? '#D97706' : '#4F8EF7'}">${m.score}<small style="font-size:0.7em;font-weight:500">/100</small></span>
+    <div class="section-score">
+      <div class="libelle-score">
+        <span>${libelleScore}</span>
+        <span class="valeur-score" style="color:${m.score >= 70 ? '#16A34A' : m.score >= 40 ? '#D97706' : '#4F8EF7'}">${m.score}<small style="font-size:0.7em;font-weight:500">/100</small></span>
       </div>
-      <div class="score-bar">
-        <div class="score-fill" style="width:${m.score}%;background:${scoreColor}"></div>
+      <div class="barre-score">
+        <div class="remplissage-score" style="width:${m.score}%;background:${couleurScore}"></div>
       </div>
-      <div class="score-breakdown">
-        <span class="mini-score">📚 ${m.score_competences}/60</span>
-        <span class="mini-score">🕐 ${m.score_horaire}/30</span>
-        <span class="mini-score">🎓 ${m.score_filiere}/10</span>
+      <div class="detail-score">
+        <span class="mini-note">📚 ${m.score_competences}/60</span>
+        <span class="mini-note">🕐 ${m.score_horaire}/30</span>
+        <span class="mini-note">🎓 ${m.score_filiere}/10</span>
       </div>
     </div>
 
-    <div class="tags-section">
-      <div class="tags-label">Compétences communes</div>
-      <div class="tags">${commonTags}</div>
+    <div class="section-etiquettes">
+      <div class="libelle-etiquettes">Compétences communes</div>
+      <div class="etiquettes">${etiquettesCommunes}</div>
     </div>
 
-    <div class="tags-section">
-      <div class="tags-label">Disponibilités</div>
-      <div class="tags">${dispoTags}</div>
+    <div class="section-etiquettes">
+      <div class="libelle-etiquettes">Disponibilités</div>
+      <div class="etiquettes">${etiquettesDispo}</div>
     </div>
 
-    <div class="tags-section">
-      <div class="tags-label">Format</div>
-      <div class="tags"><span class="tag tag-format">📍 ${m.format}</span></div>
+    <div class="section-etiquettes">
+      <div class="libelle-etiquettes">Format</div>
+      <div class="etiquettes"><span class="etiquette etiquette-format">📍 ${m.format}</span></div>
     </div>
 
-    ${m.bio ? `<div class="card-bio">"${m.bio}"</div>` : ''}
+    ${m.bio ? `<div class="bio-carte">"${m.bio}"</div>` : ''}
   `;
-  return card;
+  return carte;
 }
 
-// ============================
-// UTILS
-// ============================
-function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+function capitaliser(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 
-function hideAll() {
-  ['results-section','empty-state','error-state'].forEach(id =>
-    document.getElementById(id).classList.add('hidden')
+function masquerTout() {
+  ['section-resultats','etat-vide','etat-erreur'].forEach(id =>
+    document.getElementById(id).classList.add('masque')
   );
 }
 
-function showError(msg) {
-  const el = document.getElementById('error-state');
-  document.getElementById('error-msg').textContent = msg;
-  el.classList.remove('hidden');
+function afficherErreur(msg) {
+  const el = document.getElementById('etat-erreur');
+  document.getElementById('message-erreur').textContent = msg;
+  el.classList.remove('masque');
 }
