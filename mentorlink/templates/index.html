@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IFRI MentorLink</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+
+  <!-- PARTICULES FLOTTANTES -->
+  <div class="particles" id="particles"></div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🎓</span>
+        <span class="logo-text">IFRI <strong>MentorLink</strong></span>
+      </div>
+      <p class="header-tagline">Trouve ton mentor idéal à l'IFRI / UAC</p>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge animate-fade-down">✨ Plateforme de Mentorat IFRI</div>
+      <h1 class="animate-fade-up">
+        Trouve le mentor<br/>
+        <span class="accent typing-text" id="typing"></span>
+      </h1>
+      <p class="animate-fade-up delay-2">Notre algorithme intelligent analyse tes compétences et tes disponibilités pour te connecter avec le mentor parfait.</p>
+      <div class="hero-stats animate-fade-up delay-3">
+        <div class="stat"><span class="stat-num" data-target="6">0</span><span class="stat-label">Mentors</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num" data-target="15">0</span><span class="stat-label">Compétences</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num" data-target="100">0</span><span class="stat-label">% Gratuit</span></div>
+      </div>
+    </div>
+    <!-- Orbes animés -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </section>
+
+  <!-- SEARCH FORM -->
+  <main class="container">
+    <div class="search-card animate-slide-up">
+      <div class="card-glow"></div>
+      <h2 class="form-title">🔍 Rechercher un mentor</h2>
+
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="competences">Matières / Compétences recherchées <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <span class="input-icon">📚</span>
+            <input type="text" id="competences" placeholder="Ex: Python, Machine Learning, JavaScript..." autocomplete="off"/>
+          </div>
+          <div id="suggestions" class="suggestions-box hidden"></div>
+          <p class="form-hint">Séparez plusieurs compétences par des virgules</p>
+        </div>
+
+        <div class="form-group">
+          <label for="heure">🕐 Heure de disponibilité</label>
+          <div class="input-wrapper">
+            <input type="time" id="heure" value="10:00"/>
+          </div>
+          <p class="form-hint">Tolérance de ± 1 heure appliquée</p>
+        </div>
+
+        <div class="form-group">
+          <label for="filiere">🎓 Filière (optionnel)</label>
+          <div class="input-wrapper">
+            <select id="filiere">
+              <option value="">— Toutes les filières —</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-search" class="btn-primary" onclick="searchMentors()">
+        <span class="btn-ripple"></span>
+        <span class="btn-icon">⚡</span>
+        <span class="btn-text">Rechercher un mentor</span>
+      </button>
+    </div>
+
+    <!-- RESULTS -->
+    <section id="results-section" class="hidden">
+      <div class="results-header">
+        <h2 id="results-title">Mentors compatibles</h2>
+        <span id="results-count" class="badge pulse"></span>
+      </div>
+      <div id="results-grid" class="results-grid"></div>
+    </section>
+
+    <!-- EMPTY STATE -->
+    <div id="empty-state" class="empty-state hidden">
+      <div class="empty-animation">🔎</div>
+      <h3>Aucun mentor trouvé</h3>
+      <p>Essaie avec d'autres compétences ou ajuste ton heure de disponibilité.</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div id="error-state" class="error-state hidden">
+      <span>⚠️</span>
+      <p id="error-msg"></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>🎓 IFRI MentorLink</span>
+      <span>·</span>
+      <span>Université d'Abomey-Calavi · 2025-2026</span>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
