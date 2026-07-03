@@ -1,9 +1,10 @@
 :root {
   --bleu-profond: #0F2448;
-  --bleu-milieu:  #1E4D8C;
+  --bleu-milieu: #1e4d8c;
   --bleu-accent: #4F8EF7;
   --bleu-vif: #60A5FA;
   --bleu-clair: #EBF3FF;
+  --bleu-clair2: #16233D;
   --vert: #22C55E;
   --orange: #F59E0B;
   --rouge: #EF4444;
@@ -20,10 +21,11 @@
 
 html[data-theme="sombre"] {
   --bleu-profond: #060D1C;
-  --bleu-milieu:  #142A50;
+  --bleu-milieu: #04FFFF;
   --bleu-accent: #5B9CFF;
   --bleu-vif: #7DB4FF;
   --bleu-clair: #16233D;
+  --bleu-clair2: #EBF3FF;
   --texte-principal: #E7ECF6;
   --texte-secondaire: #98A3BE;
   --blanc: #101828;
@@ -174,14 +176,29 @@ body {
 .bouton-theme:active { transform: scale(0.92); }
 
 .heros {
-  background: linear-gradient(135deg, var(--bleu-profond) 0%, #1A3A6E 50%, #0D1F42 100%);
   padding: 72px 24px 100px;
   text-align: center;
   position: relative;
   overflow: hidden;
   z-index: 1;
 }
-.contenu-heros { max-width: 680px; margin: 0 auto; position: relative; z-index: 2; }
+.heros-fond {
+  position: absolute;
+  inset: -10px;
+  background-image: url('/static/img/fond-heros.jpg');
+  background-size: cover;
+  background-position: center 30%;
+  filter: blur(1px) brightness(0.7) saturate(1.1);
+  transform: scale(1.05);
+  z-index: 0;
+}
+.heros-superposition {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(15,36,72,0.88) 0%, rgba(26,58,110,0.72) 50%, rgba(13,31,66,0.9) 100%);
+  z-index: 1;
+}
+.contenu-heros { max-width: 680px; margin: 0 auto; position: relative; z-index: 3; }
 
 .badge-heros {
   display: inline-flex;
@@ -270,7 +287,7 @@ body {
   border-radius: 50%;
   filter: blur(60px);
   animation: flottement-orbe ease-in-out infinite;
-  z-index: 1;
+  z-index: 2;
 }
 .orbe-1 { width: 300px; height: 300px; background: rgba(79,142,247,0.2); top: -80px; left: -80px; animation-duration: 8s; }
 .orbe-2 { width: 200px; height: 200px; background: rgba(139,92,246,0.2); bottom: -40px; right: -40px; animation-duration: 10s; animation-delay: -3s; }
@@ -311,7 +328,7 @@ body {
   font-family: 'Poppins', sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--bleu-profond);
+  color: var(--texte-principal);
   margin-bottom: 28px;
 }
 .grille-formulaire {
@@ -539,7 +556,7 @@ input:focus, select:focus {
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--bleu-profond);
+  color: var(--bleu-clair2);
 }
 .info-carte {
   font-size: 0.78rem;
@@ -654,7 +671,7 @@ input:focus, select:focus {
 .etat-vide h3 {
   font-family: 'Poppins', sans-serif;
   font-size: 1.2rem;
-  color: var(--bleu-profond);
+  color: var(--texte-principal);
   margin-bottom: 8px;
 }
 .etat-vide p { color: var(--texte-secondaire); font-size: 0.9rem; }
