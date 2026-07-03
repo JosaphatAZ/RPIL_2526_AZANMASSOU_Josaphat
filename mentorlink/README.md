@@ -18,13 +18,20 @@ git clone https://github.com/TON_USERNAME/RPIL_2526_AZANMASSOU_Josaphat.git
 cd RPIL_2526_nom_prenom
 
 # 2. Créer un environnement virtuel
+(Sous Linux/MacOs)
 python3 -m venv venv
-source venv/bin/activate  # Windows : venv\Scripts\activate
+source venv/bin/activate  
 
-# 3. Installer les dépendances
+(Sous Windows)
+Windows : venv\Scripts\activate
+
+# 3. Acceder au dossier mentorlink
+cd /mentorlink 
+
+# 4. Installer les dépendances
 pip install -r requirements.txt
 
-# 4. Lancer l'application
+# 5. Lancer l'application
 python app.py
 ```
 

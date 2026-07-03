@@ -225,6 +225,7 @@ body {
   margin-bottom: 20px;
   min-height: 2.5em;
 }
+
 .accent {
   background: linear-gradient(90deg, var(--bleu-accent), #A78BFA, var(--bleu-vif));
   background-size: 200% auto;
